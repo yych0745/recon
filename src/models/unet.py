@@ -4,7 +4,7 @@ import torch.nn.functional as F
 from torch import nn
 
 import sys
-sys.path.append("..")
+sys.path.append("/Users/yych/repositry/Reconstruction_pxw")
 from src.utils.unet_initialize import initialize_weights
 
 
@@ -228,7 +228,7 @@ if __name__ == '__main__':
     x = torch.randn(1, 1, 200, 200)
     with torch.no_grad():
         y = model(x)
-        print(y.shape)
+        # print(y.shape)
     
     # model = UNet_mini(in_channels=1, num_classes=1)
     # print(model)

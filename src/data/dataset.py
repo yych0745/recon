@@ -61,34 +61,45 @@ class MyNewData(Dataset):
 
     def _loader(self, path, ind):                                     
         ut = loadmat(path)['u']
+        # print("here",ut.shape)
+        # print(ind.shape)
         monitor_y = ut * ind
+        # print(monitor_y.shape)
+
+        # print(ut.shape)
+        # print(ut[24][24])
+        # print(ind[0][24][24])
+        # print(monitor_y[0][24][24])
+        # print("monitor_y:", monitor_y)
+        # print("ut", ut)
+        # print("ind:", ind)
         ut = np.expand_dims(ut, axis=0)
         return torch.tensor(monitor_y), torch.tensor(ut)
         # return torch.tensor((monitor_y - 298) / 50), torch.tensor((ut - 298) / 50)    # 归一化
        
 
 if __name__ == '__main__':
-    root = '/mnt/share1/pengxingwen/Dataset/vp/vp_c1_60k'
-    train_path = '/mnt/share1/pengxingwen/Dataset/vp/train.txt'
-    test_path = '/mnt/share1/pengxingwen/Dataset/vp/test.txt'
+    root = '/Users/yych/repositry/Reconstruction_pxw/vp_c1_60k'
+    train_path = '/Users/yych/repositry/Reconstruction_pxw/train.txt'
+    test_path = '/Users/yych/repositry/Reconstruction_pxw/test.txt'
 
     batch_size = 64                                    
-    ind_4 = torch.load('/mnt/share1/pengxingwen/reconstruction_pxw/src/data/ind_4.pt')
+    ind_4 = torch.load('/Users/yych/repositry/Reconstruction_pxw/ind/ind_4.pt')
     # train_dataset = HeatsinkData(root, train_path, ind_4, None)
     # train_iter = DataLoader(train_dataset, batch_size = batch_size, shuffle= True, num_workers=4)
-    test_dataset = HeatsinkData(root, test_path, ind_4, None)
-    test_iter  = DataLoader(test_dataset, batch_size = batch_size, shuffle= False, num_workers=4)
+    # test_dataset = HeatsinkData(root, test_path, ind_4, None)
+    # test_iter  = DataLoader(test_dataset, batch_size = batch_size, shuffle= False, num_workers=4)
     # print(len(train_iter), len(test_iter))
-    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    # device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-    for i, batch_data in enumerate(test_iter):
-        # print(i)                                          
-        X1, y1 = batch_data
-        print('X1:', X1.shape, 'y1:', y1.shape)
-        y1 = y1.numpy()
-        y1 = y1.reshape(5, 30)
-        plt.imshow(y1, cmap='jet')  
-        plt.colorbar(fraction=0.045, pad=0.05)
-        plt.savefig('y1_' + str(i) + '.png')   
-        if i == 1:
-            break                                    
+    # for i, batch_data in enumerate(test_iter):
+    #     # print(i)                                          
+    #     X1, y1 = batch_data
+    #     print('X1:', X1.shape, 'y1:', y1.shape)
+    #     y1 = y1.numpy()
+    #     y1 = y1.reshape(5, 30)
+    #     plt.imshow(y1, cmap='jet')  
+    #     plt.colorbar(fraction=0.045, pad=0.05)
+    #     plt.savefig('y1_' + str(i) + '.png')   
+    #     if i == 1:
+    #         break                                    

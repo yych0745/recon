@@ -22,7 +22,8 @@ from torch.utils.data import DataLoader
 from src.data.dataset import MyNewData
 from src.models.unet import UNetV2
 # from src.models.unet_original import UNet
-from src.loss.loss import GradientLoss, TVLoss, loss_error
+# from src.loss.loss import GradientLoss, TVLoss, loss_error
+from src.loss.loss import GradientLoss, loss_error
 from src.loss.train_log import train_log_draw
 
 
@@ -48,6 +49,7 @@ def train(dataset, model, net, optimizer, device, num_epochs, criterion, la):
         MaxAE, MTAE = [], []                                       
         MaxAE_epoch, MTAE_epoch = 0.0, 0.0                         
         
+        # 训练模式
         net.train()
         for _, data1 in enumerate(train_iter):
             X1, y1 = data1
@@ -63,6 +65,7 @@ def train(dataset, model, net, optimizer, device, num_epochs, criterion, la):
             train_loss += l1.cpu().item() * y1.size(0)             
         scheduler.step()
 
+        # 测试模式
         net.eval()
         with torch.no_grad():
             for _, data2 in enumerate(test_iter):
@@ -85,7 +88,7 @@ def train(dataset, model, net, optimizer, device, num_epochs, criterion, la):
 
         # 4 matrics: MAE, CMAE, MaxAE, MT-AE
         MaxAE, MTAE = torch.tensor(MaxAE).reshape(-1), torch.tensor(MTAE).reshape(-1)      
-        MaxAE_epoch, MTAE_epoch = torch.max(MaxAE), torch.max(MTAE)                        E
+        MaxAE_epoch, MTAE_epoch = torch.max(MaxAE), torch.max(MTAE)                        
 
 
         # train_loss, test_loss, mae, cmae, MaxAE_epoch, MTAE_epoch     
@@ -99,8 +102,11 @@ def train(dataset, model, net, optimizer, device, num_epochs, criterion, la):
     
     torch.save(net, path1)                                                                            
     torch.save(net.state_dict(), path2)                                                            
-    np.savetxt('/mnt/share1/pengxingwen/reconstruction_pxw/results/' + str(dataset) + '_' + str(model)+ '/' \
+    np.savetxt('results/' + str(dataset) + '_' + str(model)+ '/' \
     'train_log' + '_' + str(num_epochs) + 'epoch.txt', train_log)                                               
+    # 数量在这加
+    np.savetxt('results/' + str(dataset) + '_' + str(model)+ '/' \
+    'train_log_数量' + '_' + str(num_epochs) + 'epoch.txt', train_log)                                               
     print('dataset = ' + str(dataset) + ', train_samples:', l_train, ', test_samples:', l_test)                
 
 
@@ -108,12 +114,17 @@ if __name__ == '__main__':
 
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     dataset = 'lr0.005'
-    root = '/mnt/share1/pengxingwen/Dataset/vp/vp_c1_60k'
-    train_path = '/mnt/share1/pengxingwen/Dataset/vp/train.txt'
-    test_path = '/mnt/share1/pengxingwen/Dataset/vp/test.txt'
-    batch_size = 64                                 
-    ind = torch.load('/mnt/share1/pengxingwen/reconstruction_pxw/src/ind/ind_4.pt')
-    cnd = torch.load('/mnt/share1/pengxingwen/reconstruction_pxw/src/ind/cnd_c1.pt')
+    root = 'dataset/data/'
+    # train_path = 'train_1.txt'
+    # test_path = 'test_1.txt'
+    # batch_size = 8
+    # ind = torch.load('ind/ind_4.pt')
+    # cnd = torch.load('ind/cnd_c1.pt')
+    train_path = 'train.txt'
+    test_path = 'test.txt'
+    batch_size = 2
+    ind = torch.load('ind/ind_yych_new.pt')
+    cnd = torch.load('ind/cnd_yych.pt')
     cnd = cnd.to(device) 
 
     model = 'UNetV2'          
@@ -124,17 +135,18 @@ if __name__ == '__main__':
     gradient_loss = GradientLoss()                     
     lr = 0.005                         
     la = 0                              
-    num_epochs = 30                   
+    num_epochs = 100                   
+    # num_epochs = 2
     st = time.time()                 
     
     optimizer = torch.optim.Adam(net.parameters(), lr=lr)            
     scheduler = ExponentialLR(optimizer, gamma=0.98)                 
 
-    dirs = '/mnt/share1/pengxingwen/reconstruction_pxw/results/' + str(dataset) + '_' + str(model)
+    dirs = 'results/' + str(dataset) + '_' + str(model)
     if not os.path.exists(dirs):
         os.makedirs(dirs)
-    path1 = '/mnt/share1/pengxingwen/reconstruction_pxw/results/' + str(dataset) + '_' + str(model) + '/' + str(dataset) + '_' + str(model) + '_' + str(num_epochs) + 'epoch.pt'
-    path2 = '/mnt/share1/pengxingwen/reconstruction_pxw/results/' + str(dataset) + '_' + str(model) + '/' + str(dataset) + '_' + str(model) +'_' + str(num_epochs) + 'epoch_params.pt'
+    path1 = 'results/' + str(dataset) + '_' + str(model) + '/' + str(dataset) + '_' + str(model) + '_' + str(num_epochs) + 'epoch.pt'
+    path2 = 'results/' + str(dataset) + '_' + str(model) + '/' + str(dataset) + '_' + str(model) +'_' + str(num_epochs) + 'epoch_params.pt'
   
     print("Trainning start")
     train(dataset, model, net, optimizer, device, num_epochs, criterion, la)

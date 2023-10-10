@@ -19,22 +19,26 @@ import matplotlib.pyplot as plt
 def train_log_draw(dataset, model, num_epochs):
 
     if str(model) == 'MLP':
-        train_log = np.load('/mnt/share1/pengxingwen/reconstruction_pxw/results/runs/' \
+        train_log = np.load('results/runs/' \
     + str(dataset[0:2]) + '/MLP/'+ str(dataset) + '_' + str(model)+ '_' + str(num_epochs) + 'epoch/train_log.npy')
         path = 'results/runs/' + str(dataset[0:2]) + '/MLP/'+ str(dataset) + '_'\
      + str(model)+ '_' + str(num_epochs) + 'epoch/Train_curve.png'
     else:
-        train_log = np.loadtxt('/mnt/share1/pengxingwen/reconstruction_pxw/results/' \
+        train_log = np.loadtxt('results/' \
     + str(dataset) + '_' + str(model) + '/train_log' + '_' + str(num_epochs) + 'epoch.txt')
-        path = '/mnt/share1/pengxingwen/reconstruction_pxw/results/' + str(dataset) + '_' + str(model) \
+        path = 'results/' + str(dataset) + '_' + str(model) \
     + '/Train_curve' + '_' + str(num_epochs) + 'epoch.png'
     
     print('train_log: \nTrain loss = {:.6f} \nTest loss = {:.6f} \nMAE = {:.6f} \nCMAE = {:.6f}K' 
     '\nMaxAE = {:.6f}K \nMT-AE = {:.6f}K '.format(train_log[-1][0], \
     train_log[-1][1], train_log[-1][2], train_log[-1][3], train_log[-1][4], train_log[-1][5]))
 
-    x_epoch = range(num_epochs-1)
+    # x_epoch = range(num_epochs-1)
+    x_epoch = range(num_epochs)
+    print("x_epoch", x_epoch)
+    print("train_log[:, 0]:", train_log)
     fig = plt.figure(figsize=(20, 24))
+    print("train_log:", train_log)
     plt.subplot(3, 1, 1)  
     plt.title('Train Curve: Train loss = {:.4f}, Test loss = {:.4f}'\
     .format(train_log[-1][0], train_log[-1][1]))   
